@@ -4,6 +4,20 @@ const createError = require("http-errors");
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
+const mongoose = require("mongoose");
+
+const db = process.env.DATABASE.replace(
+  "<password>",
+  process.env.DATABASE_PASSWORD
+);
+
+mongoose.connect(db, {
+  useNewUrlParser: true,
+  useCreateIndex: true,
+  useUnifiedTopology: true
+})
+  .then(() => console.log("Database connection successful 👍🏻"))
+  .catch(err => console.log(err));
 
 const usersRouter = require("./routes/users");
 const loginRouter = require("./routes/login");
@@ -17,6 +31,7 @@ app.use(cookieParser());
 
 app.use("/users", usersRouter);
 app.use("/auth/login", loginRouter);
+app.use("battle", battleRouter);
 
 app.use(function(req, res, next) {
   next(createError(404));
