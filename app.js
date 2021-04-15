@@ -5,6 +5,7 @@ const express = require("express");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const mongoose = require("mongoose");
+const cors = require("cors");
 
 const db = process.env.DATABASE.replace(
   "<password>",
@@ -21,9 +22,15 @@ mongoose.connect(db, {
 
 const usersRouter = require("./routes/users");
 const loginRouter = require("./routes/login");
+const battleRouter = require("./routes/battle")
 
 const app = express();
 
+app.use(cors({
+  origin: true,
+  credentials: true,
+  httpOnly: true
+}));
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -31,7 +38,7 @@ app.use(cookieParser());
 
 app.use("/users", usersRouter);
 app.use("/auth/login", loginRouter);
-app.use("battle", battleRouter);
+app.use("/battle", battleRouter);
 
 app.use(function(req, res, next) {
   next(createError(404));
