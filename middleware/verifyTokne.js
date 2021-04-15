@@ -17,6 +17,6 @@ module.exports = async (req, res, next) => {
         });
     }
   } catch{
-    createError(500, err.message);
+    next(createError(500, err.message));
   }
 };
