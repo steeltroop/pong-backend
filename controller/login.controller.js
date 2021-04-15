@@ -4,8 +4,8 @@ const createError = require("http-errors");
 module.exports.login = async (req, res, next) => {
   try {
     const { email, name } = req.body;
-    const currentUser = await User.findOne({ email });
 
+    const currentUser = await User.findOne({ email });
     if (!currentUser) await User.create(req.body);
 
     const token = jwt.sign({ email, name }, process.env.JWT_SECRET);
