@@ -23,7 +23,7 @@ module.exports = (io) => {
         isMatched: true,
         partner: {
           socketId: partner.id,
-          name: totlaUserList[partner.id]
+          name: totalUserList[partner.id]
         }
       });
 
@@ -31,14 +31,11 @@ module.exports = (io) => {
         isMatched: true,
         partner: {
           socketId: socket.id,
-          name: totlaUserList[socket.id]
+          name: totalUserList[socket.id]
         }
       });
     } else {
       waitingQue.push(socket);
-      io.to(socket.id).emit("completeMatch", {
-        isMatched: true
-      });
     }
   });
 };

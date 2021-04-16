@@ -29,7 +29,13 @@ const server = http.createServer(app);
 
 server.listen(port);
 
-const io = SocketIo(server);
+const io = SocketIo(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+    credentials: true
+  }
+});
 socketEvents(io);
 server.on("error", onError);
 server.on("listening", onListening);
