@@ -46,8 +46,23 @@ module.exports = (io) => {
     });
 
     socket.on("leaveRoom", ({ userSocketId, partnerSocketId }) => {
-      console.log("this is user " + userSocketId);
-      console.log("this is partner" + partnerSocketId);
+      const roomKey = totalRoomList[userSocketId];
+
+      io.to(partnerSocketId).emit("partnerDisconnect");
+
+      delete totalUserList[userSocketId];
+      delete totalRoomList[userSocketId];
+
+      socket.leave(roomKey);
+    });
+
+    socket.on("partnerDisconnect", () => {
+      const roomKey = totalRoomList[socket.id];
+
+      delete totalUserList[socket.id];
+      delete totalRoomList[socket.id];
+
+      socket.leave(roomKey);
     });
   });
 };
