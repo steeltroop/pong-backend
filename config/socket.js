@@ -5,7 +5,7 @@ const waitingQue = [];
 module.exports = (io) => {
   io.on("connection", (socket) => {
     socket.on("initialConnection", (username) => {
-      totalUserList[socket.io] = username;
+      totalUserList[socket.id] = username;
       io.to(socket.id).emit("connectSuccess", socket.id);
 
       if (waitingQue.length > 0) {
@@ -43,6 +43,11 @@ module.exports = (io) => {
       const newChat = { userSocketId, text };
 
       io.sockets.in(roomKey).emit("sendTextMessage", newChat);
+    });
+
+    socket.on("leaveRoom", ({ userSocketId, partnerSocketId }) => {
+      console.log("this is user " + userSocketId);
+      console.log("this is partner" + partnerSocketId);
     });
   });
 };
