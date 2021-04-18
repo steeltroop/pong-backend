@@ -23,6 +23,10 @@ module.exports = (io) => {
           partner: {
             socketId: partner.id,
             name: totalUserList[partner.id]
+          },
+          webcam: {
+            isCalling: true,
+            isCallAccepted: false
           }
         });
 
@@ -63,6 +67,14 @@ module.exports = (io) => {
       delete totalRoomList[socket.id];
 
       socket.leave(roomKey);
+    });
+
+    socket.on("callUser", ({ partnerSocketId, signalData }) => {
+      io.to(partnerSocketId).emit("callUser", signalData);
+    });
+
+    socket.on("acceptCall", ({ signalData, partnerSocketId }) => {
+      io.to(partnerSocketId).emit("acceptCall", signalData);
     });
   });
 };
