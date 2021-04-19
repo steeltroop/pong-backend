@@ -26,7 +26,14 @@ module.exports = (io) => {
           },
           webcam: {
             isCalling: true,
-            isCallAccepted: false
+            isCallAccepted: false,
+            callserSignal: null
+          },
+          gameBoard: {
+            sender: true,
+            partnerPosition: 0,
+            ballPositionX: 0,
+            ballPositionY: 0
           }
         });
 
@@ -75,6 +82,14 @@ module.exports = (io) => {
 
     socket.on("acceptCall", ({ signalData, partnerSocketId }) => {
       io.to(partnerSocketId).emit("acceptCall", signalData);
+    });
+
+    socket.on("sendPosition", ({ position, partnerSocketId }) => {
+      io.to(partnerSocketId).emit("sendPosition", { position });
+    });
+
+    socket.on("sendBallPosition", ({ positionX, positionY, partnerSocketId }) => {
+      io.to(partnerSocketId).emit("sendBallPosition", { positionX, positionY });
     });
   });
 };
