@@ -1,21 +1,10 @@
 const { ballData, userPaddleData, partnerPaddleData } = require("./data");
 const { userPaddleCollision, partnerPaddleCollision } = require("./paddleCollision");
 
-const server = (canvas, reset, moderator) => {
+const server = (canvas, moderator) => {
   if (!canvas) {
     return { ballData, userPaddleData, partnerPaddleData };
   };
-
-  if (reset) {
-    ballData.x = canvas.width / 2;
-    ballData.y = canvas.height / 2;
-    ballData.dx = 0;
-    ballData.dy = 5;
-    userPaddleData.x = canvas.width / 2 - userPaddleData.width / 2;
-    partnerPaddleData.x = canvas.width / 2 - partnerPaddleData.width / 2;
-
-    return { ballData, userPaddleData, partnerPaddleData };
-  }
 
   if (!moderator) {
     return { ballData };

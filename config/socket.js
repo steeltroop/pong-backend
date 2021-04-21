@@ -112,18 +112,33 @@ module.exports = (io) => {
         if (!isKeyDown) clearInterval(update);
 
         if (isModerator && keyCode === LEFT) {
-          userPaddleData.x -= distance;
+          if (userPaddleData.x <= 0) {
+            userPaddleData.x = 0;
+          } else {
+            userPaddleData.x -= distance;
+          }
         }
 
         if (isModerator && keyCode === RIGHT) {
-          userPaddleData.x += distance;
+          if (userPaddleData.x + userPaddleData.width >= canvas.width) {
+            userPaddleData.x = canvas.width - userPaddleData.width;
+          } else {
+            userPaddleData.x += distance;
+          }
         }
 
         if (!isModerator && keyCode === LEFT) {
-          partnerPaddleData.x -= distance;
+          if (partnerPaddleData.x <= 0) {
+            partnerPaddleData.x = 0;
+          } else {
+            partnerPaddleData.x -= distance;
+          }
         }
 
         if (!isModerator && keyCode === RIGHT) {
+          if (partnerPaddleData.x + partnerPaddleData.width >= canvas.width) {
+            partnerPaddleData.x = canvas.width - partnerPaddleData.width;
+          }
           partnerPaddleData.x += distance;
         }
 
@@ -140,16 +155,9 @@ module.exports = (io) => {
 
     socket.on("move", (isModerator) => {
       const roomKey = totalRoomList[socket.id];
-      const result = server(canvas, false, isModerator);
+      const result = server(canvas, isModerator);
 
       io.sockets.in(roomKey).emit("move", result);
-    });
-
-    socket.on("reset", () => {
-      const roomKey = totalRoomList[socket.id];
-      const result = server(canvas, true);
-
-      io.sockets.in(roomKey).emit("reset", result);
     });
   });
 };

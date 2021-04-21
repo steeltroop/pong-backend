@@ -2,7 +2,7 @@ const { ballData, userPaddleData, partnerPaddleData } = require("./data");
 
 module.exports.userPaddleCollision = () => {
   if (
-    ballData.x <= userPaddleData.x + userPaddleData.width &&
+    ballData.x < userPaddleData.x + userPaddleData.width &&
     ballData.x >= userPaddleData.x &&
     userPaddleData.y < userPaddleData.y + userPaddleData.height &&
     ballData.y + ballData.radius > userPaddleData.y - userPaddleData.height / 2
@@ -20,8 +20,8 @@ module.exports.userPaddleCollision = () => {
 
 module.exports.partnerPaddleCollision = (canvas) => {
   if (
-    ballData.x >= (canvas.width - partnerPaddleData.x) - partnerPaddleData.width &&
-    ballData.x <= canvas.width - partnerPaddleData.x &&
+    ballData.x > canvas.width - partnerPaddleData.x - partnerPaddleData.width / 2 &&
+    ballData.x <= canvas.width - partnerPaddleData.x + partnerPaddleData.width / 2 &&
     ballData.y < partnerPaddleData.y + partnerPaddleData.height &&
     ballData.y - ballData.radius < partnerPaddleData.y + partnerPaddleData.height / 2
     ) {
