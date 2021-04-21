@@ -1,6 +1,15 @@
+const server = require("../game");
+const { ballData, userPaddleData, partnerPaddleData } = require("../game/data");
+
 const totalUserList = {};
 const totalRoomList = {};
 const waitingQue = [];
+const canvas = {};
+
+const LEFT = 37;
+const RIGHT = 39;
+
+let isKeyDown = false;
 
 module.exports = (io) => {
   io.on("connection", (socket) => {
@@ -30,10 +39,7 @@ module.exports = (io) => {
             callserSignal: null
           },
           gameBoard: {
-            sender: true,
-            partnerPosition: 0,
-            ballPositionX: 0,
-            ballPositionY: 0
+            isModerator: true,
           }
         });
 
@@ -84,12 +90,66 @@ module.exports = (io) => {
       io.to(partnerSocketId).emit("acceptCall", signalData);
     });
 
-    socket.on("sendPosition", ({ position, partnerSocketId }) => {
-      io.to(partnerSocketId).emit("sendPosition", { position });
+    socket.on("refresh", () => {
+      userPaddleData.x = canvas.width / 2;
+      partnerPaddleData.x = canvas.width / 2;
     });
 
-    socket.on("sendBallPosition", ({ positionX, positionY, partnerSocketId }) => {
-      io.to(partnerSocketId).emit("sendBallPosition", { positionX, positionY });
+    socket.on("sendCanvas", ({ canvasWidth, canvasHeight }) => {
+      canvas.width = canvasWidth;
+      canvas.height = canvasHeight;
+      userPaddleData.y = canvas.height - userPaddleData.height - ballData.radius;
+      partnerPaddleData.y = partnerPaddleData.height + ballData.radius;
+    });
+
+    socket.on("keyDown", ({ keyCode, isModerator }) => {
+      const roomKey = totalRoomList[socket.id];
+      const distance = canvas.width / 100;
+
+      isKeyDown = true;
+
+      const update = setInterval(() => {
+        if (!isKeyDown) clearInterval(update);
+
+        if (isModerator && keyCode === LEFT) {
+          userPaddleData.x -= distance;
+        }
+
+        if (isModerator && keyCode === RIGHT) {
+          userPaddleData.x += distance;
+        }
+
+        if (!isModerator && keyCode === LEFT) {
+          partnerPaddleData.x -= distance;
+        }
+
+        if (!isModerator && keyCode === RIGHT) {
+          partnerPaddleData.x += distance;
+        }
+
+        io.sockets.in(roomKey).emit("keyDown", {
+          userPaddleX: userPaddleData.x,
+          partnerPaddleX: partnerPaddleData.x
+        });
+      }, 10);
+    });
+
+    socket.on("keyUp", () => {
+      isKeyDown = false;
+    });
+
+    socket.on("move", (isModerator) => {
+      const roomKey = totalRoomList[socket.id];
+      const result = server(canvas, false, isModerator);
+
+      io.sockets.in(roomKey).emit("move", result);
+    });
+
+    socket.on("reset", () => {
+      const roomKey = totalRoomList[socket.id];
+      const result = server(canvas, true);
+
+      io.sockets.in(roomKey).emit("reset", result);
     });
   });
 };
