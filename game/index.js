@@ -15,11 +15,11 @@ const server = (canvas, moderator) => {
 
   if (ballData.y - ballData.radius < 0) {
     ballData.dx = 0;
-    ballData.dy = -5;
+    ballData.dy = 5;
     ballData.x = canvas.width / 2;
     ballData.y = canvas.height / 2;
 
-    return { ballData, end: true };
+    return { ballData, end: true, isBallTop: true };
   }
 
   if (ballData.y > canvas.height - ballData.radius) {
@@ -28,10 +28,13 @@ const server = (canvas, moderator) => {
     ballData.x = canvas.width / 2;
     ballData.y = canvas.height / 2;
 
-    return { ballData, end: true };
+    return { ballData, end: true, isBallTop: false };
   }
 
-  if (ballData.x - ballData.radius < 0 || ballData.x + ballData.radius > canvas.width) {
+  if (
+    ballData.x - ballData.radius < 0 ||
+    ballData.x + ballData.radius > canvas.width
+    ) {
     ballData.dx *= -1;
   }
 

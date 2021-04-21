@@ -20,8 +20,8 @@ module.exports.userPaddleCollision = () => {
 
 module.exports.partnerPaddleCollision = (canvas) => {
   if (
-    ballData.x > canvas.width - partnerPaddleData.x - partnerPaddleData.width / 2 &&
-    ballData.x <= canvas.width - partnerPaddleData.x + partnerPaddleData.width / 2 &&
+    ballData.x >= canvas.width - partnerPaddleData.x - partnerPaddleData.width &&
+    ballData.x <= canvas.width - partnerPaddleData.x &&
     ballData.y < partnerPaddleData.y + partnerPaddleData.height &&
     ballData.y - ballData.radius < partnerPaddleData.y + partnerPaddleData.height / 2
     ) {

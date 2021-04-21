@@ -8,6 +8,9 @@ const canvas = {};
 
 const LEFT = 37;
 const RIGHT = 39;
+const UPDATE_TIME = 10;
+const HALF = 2;
+const PERCENTAGE = 100;
 
 let isKeyDown = false;
 
@@ -91,8 +94,8 @@ module.exports = (io) => {
     });
 
     socket.on("refresh", () => {
-      userPaddleData.x = canvas.width / 2;
-      partnerPaddleData.x = canvas.width / 2;
+      userPaddleData.x = canvas.width / HALF;
+      partnerPaddleData.x = canvas.width / HALF;
     });
 
     socket.on("sendCanvas", ({ canvasWidth, canvasHeight }) => {
@@ -104,7 +107,7 @@ module.exports = (io) => {
 
     socket.on("keyDown", ({ keyCode, isModerator }) => {
       const roomKey = totalRoomList[socket.id];
-      const distance = canvas.width / 100;
+      const distance = canvas.width / PERCENTAGE;
 
       isKeyDown = true;
 
@@ -146,7 +149,7 @@ module.exports = (io) => {
           userPaddleX: userPaddleData.x,
           partnerPaddleX: partnerPaddleData.x
         });
-      }, 10);
+      }, UPDATE_TIME);
     });
 
     socket.on("keyUp", () => {
