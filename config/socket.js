@@ -58,7 +58,7 @@ module.exports = (io) => {
       }
     });
 
-    socket.on("sendTextMessage", ({ text, userSocketId }) => {
+    socket.on("sendTextMessage", ({ text, userSocketId, partnerSocketId }) => {
       const roomKey = totalRoomList[userSocketId];
       const newChat = { userSocketId, text };
 
@@ -68,16 +68,19 @@ module.exports = (io) => {
     socket.on("leaveRoom", ({ userSocketId, partnerSocketId }) => {
       const roomKey = totalRoomList[userSocketId];
 
-      io.to(partnerSocketId).emit("partnerDisconnect");
-
       delete totalUserList[userSocketId];
       delete totalRoomList[userSocketId];
+
+      io.to(userSocketId).emit("redirectHome");
+      io.to(partnerSocketId).emit("partnerDisconnect");
 
       socket.leave(roomKey);
     });
 
     socket.on("partnerDisconnect", () => {
       const roomKey = totalRoomList[socket.id];
+
+      io.to(socket.id).emit("redirectHome");
 
       delete totalUserList[socket.id];
       delete totalRoomList[socket.id];
