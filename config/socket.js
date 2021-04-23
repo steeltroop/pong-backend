@@ -97,6 +97,11 @@ module.exports = (io) => {
       io.to(partnerSocketId).emit("acceptCall", signalData);
     });
 
+    socket.on("destroyPeer", ({ userSocketId, partnerSocketId }) => {
+      io.to(userSocketId).emit("destroyPeer");
+      io.to(partnerSocketId).emit("destroyPeer");
+    });
+
     socket.on("refresh", () => {
       userPaddleData.x = canvas.width / HALF;
       partnerPaddleData.x = canvas.width / HALF;
