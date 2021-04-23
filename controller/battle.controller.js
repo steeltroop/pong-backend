@@ -5,7 +5,7 @@ module.exports.patch = async (req, res, next) => {
   try {
     const { email } = req.body;
     const currentUser = await User.findOne({ email });
-    console.log(currentUser);
+
     currentUser.winningPoint += 10;
 
     await currentUser.save();
