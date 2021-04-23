@@ -18,6 +18,7 @@ module.exports = (io) => {
   io.on("connection", (socket) => {
     socket.on("initialConnection", (username) => {
       totalUserList[socket.id] = username;
+
       io.to(socket.id).emit("connectSuccess", socket.id);
 
       if (waitingQue.length > 0) {
@@ -58,7 +59,7 @@ module.exports = (io) => {
       }
     });
 
-    socket.on("sendTextMessage", ({ text, userSocketId, partnerSocketId }) => {
+    socket.on("sendTextMessage", ({ text, userSocketId }) => {
       const roomKey = totalRoomList[userSocketId];
       const newChat = { userSocketId, text };
 
@@ -68,11 +69,11 @@ module.exports = (io) => {
     socket.on("leaveRoom", ({ userSocketId, partnerSocketId }) => {
       const roomKey = totalRoomList[userSocketId];
 
-      delete totalUserList[userSocketId];
-      delete totalRoomList[userSocketId];
-
       io.to(userSocketId).emit("redirectHome");
       io.to(partnerSocketId).emit("partnerDisconnect");
+
+      delete totalUserList[userSocketId];
+      delete totalRoomList[userSocketId];
 
       socket.leave(roomKey);
     });
@@ -104,8 +105,11 @@ module.exports = (io) => {
     socket.on("sendCanvas", ({ canvasWidth, canvasHeight }) => {
       canvas.width = canvasWidth;
       canvas.height = canvasHeight;
+
       userPaddleData.y = canvas.height - userPaddleData.height - ballData.radius;
       partnerPaddleData.y = partnerPaddleData.height + ballData.radius;
+      userPaddleData.x = (canvas.width / 2) - (userPaddleData.width / 2);
+      partnerPaddleData.x = (canvas.width / 2) - (partnerPaddleData.width / 2);
     });
 
     socket.on("keyDown", ({ keyCode, isModerator }) => {
@@ -164,6 +168,11 @@ module.exports = (io) => {
       const result = server(canvas, isModerator);
 
       io.sockets.in(roomKey).emit("move", result);
+    });
+
+    socket.on("endRound", () => {
+      userPaddleData.x = (canvas.width / 2) - (userPaddleData.width / 2);
+      partnerPaddleData.x = (canvas.width / 2) - (partnerPaddleData.width / 2);
     });
   });
 };
