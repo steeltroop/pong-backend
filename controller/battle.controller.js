@@ -1,11 +1,12 @@
 const createError = require("http-errors");
+const User = require("../models/User");
 
 module.exports.patch = async (req, res, next) => {
   try {
     const { email } = req.body;
     const currentUser = await User.findOne({ email });
-
-    currentUser.winningPoint += 100;
+    console.log(currentUser);
+    currentUser.winningPoint += 10;
 
     await currentUser.save();
 
