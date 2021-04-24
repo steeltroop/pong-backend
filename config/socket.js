@@ -59,6 +59,10 @@ module.exports = (io) => {
       }
     });
 
+    socket.on("subtractWaitingQue", () => {
+      waitingQue.shift();
+    });
+
     socket.on("sendTextMessage", ({ text, userSocketId }) => {
       const roomKey = totalRoomList[userSocketId];
       const newChat = { userSocketId, text };
