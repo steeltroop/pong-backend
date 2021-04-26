@@ -8,11 +8,12 @@ const canvas = {};
 
 const LEFT = 37;
 const RIGHT = 39;
-const UPDATE_TIME = 10;
+const UPDATE_TIME = 1000 / 60;
 const HALF = 2;
-const PERCENTAGE = 100;
+const PERCENTAGE = 50;
 
-let isKeyDown = false;
+let isUserKeyDown = false;
+let isPartnerKeyDown = false;
 
 module.exports = (io) => {
   io.on("connection", (socket) => {
@@ -125,51 +126,70 @@ module.exports = (io) => {
       const roomKey = totalRoomList[socket.id];
       const distance = canvas.width / PERCENTAGE;
 
-      isKeyDown = true;
+      if (isModerator) isUserKeyDown = true;
+      if (!isModerator) isPartnerKeyDown = true;
 
       const update = setInterval(() => {
-        if (!isKeyDown) clearInterval(update);
+        let send = false;
 
-        if (isModerator && keyCode === LEFT) {
-          if (userPaddleData.x <= 0) {
-            userPaddleData.x = 0;
-          } else {
-            userPaddleData.x -= distance;
-          }
+        if (isModerator === !isUserKeyDown) {
+          clearInterval(update);
+
+          return;
+        } else if (!isModerator === !isPartnerKeyDown) {
+          clearInterval(update);
+
+          return;
         }
 
-        if (isModerator && keyCode === RIGHT) {
-          if (userPaddleData.x + userPaddleData.width >= canvas.width) {
-            userPaddleData.x = canvas.width - userPaddleData.width;
-          } else {
-            userPaddleData.x += distance;
-          }
+        if (
+          isModerator
+          && keyCode === LEFT
+          && userPaddleData.x >= 0
+          ) {
+          userPaddleData.x -= distance;
+          send = true;
         }
 
-        if (!isModerator && keyCode === LEFT) {
-          if (partnerPaddleData.x <= 0) {
-            partnerPaddleData.x = 0;
-          } else {
-            partnerPaddleData.x -= distance;
-          }
+        if (
+          isModerator
+          && keyCode === RIGHT
+          && userPaddleData.x + userPaddleData.width <= canvas.width
+          ) {
+          userPaddleData.x += distance;
+          send = true;
         }
 
-        if (!isModerator && keyCode === RIGHT) {
-          if (partnerPaddleData.x + partnerPaddleData.width >= canvas.width) {
-            partnerPaddleData.x = canvas.width - partnerPaddleData.width;
-          }
+        if (
+          !isModerator
+          && keyCode === LEFT
+          && partnerPaddleData.x >= 0
+          ) {
+          partnerPaddleData.x -= distance;
+          send = true;
+        }
+
+        if (
+          !isModerator
+          && keyCode === RIGHT
+          && partnerPaddleData.x + partnerPaddleData.width <= canvas.width
+          ) {
           partnerPaddleData.x += distance;
+          send = true;
         }
 
-        io.sockets.in(roomKey).emit("keyDown", {
-          userPaddleX: userPaddleData.x,
-          partnerPaddleX: partnerPaddleData.x
-        });
+        if (send) {
+          io.sockets.volatile.in(roomKey).emit("keyDown", {
+            userPaddleX: userPaddleData.x,
+            partnerPaddleX: partnerPaddleData.x
+          });
+        }
       }, UPDATE_TIME);
     });
 
-    socket.on("keyUp", () => {
-      isKeyDown = false;
+    socket.on("keyUp", isModerator => {
+      if (isModerator) isUserKeyDown = false;
+      if (!isModerator) isPartnerKeyDown = false;
     });
 
     socket.on("move", (isModerator) => {
@@ -179,7 +199,7 @@ module.exports = (io) => {
       io.sockets.in(roomKey).emit("move", result);
     });
 
-    socket.on("endRound", () => {
+    socket.on("startRound", () => {
       userPaddleData.x = (canvas.width / 2) - (userPaddleData.width / 2);
       partnerPaddleData.x = (canvas.width / 2) - (partnerPaddleData.width / 2);
     });
