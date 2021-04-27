@@ -58,7 +58,9 @@ module.exports = (io) => {
     });
 
     socket.on("subtractWaitingQue", () => {
-      waitingQue.shift();
+      if (waitingQue.length && waitingQue[0].id === socket.id) {
+        waitingQue.shift();
+      }
     });
 
     socket.on("sendTextMessage", ({ text, userSocketId }) => {
@@ -70,6 +72,10 @@ module.exports = (io) => {
 
     socket.on("leaveRoom", ({ userSocketId, partnerSocketId }) => {
       const roomKey = totalRoomList[userSocketId];
+
+      if (waitingQue.length && waitingQue[0].id === socket.id) {
+        waitingQue.shift();
+      }
 
       io.to(userSocketId).emit("redirectHome");
       io.to(partnerSocketId).emit("partnerDisconnect");
