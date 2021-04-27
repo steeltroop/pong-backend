@@ -1,14 +1,10 @@
 const { ballData, userPaddleData, partnerPaddleData } = require("./data");
 const { userPaddleCollision, partnerPaddleCollision } = require("./paddleCollision");
 
-const server = (canvas, moderator) => {
+const calculateBallPosition = (canvas) => {
   if (!canvas) {
     return { ballData, userPaddleData, partnerPaddleData };
   };
-
-  if (!moderator) {
-    return { ballData };
-  }
 
   ballData.x += ballData.dx;
   ballData.y += ballData.dy;
@@ -44,4 +40,4 @@ const server = (canvas, moderator) => {
   return { ballData };
 };
 
-module.exports = server;
+module.exports = calculateBallPosition;
