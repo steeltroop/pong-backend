@@ -9,7 +9,8 @@ const canvas = {};
 const LEFT = 37;
 const RIGHT = 39;
 const HALF = 2;
-const PERCENTAGE = 100;
+const PERCENTAGE = 50;
+let DISTANCE = 0;
 
 module.exports = (io) => {
   io.on("connection", (socket) => {
@@ -111,47 +112,46 @@ module.exports = (io) => {
     socket.on("sendCanvas", ({ canvasWidth, canvasHeight }) => {
       canvas.width = canvasWidth;
       canvas.height = canvasHeight;
+      DISTANCE = canvas.width / PERCENTAGE;
 
       userPaddleData.y = canvas.height - userPaddleData.height - ballData.radius;
       partnerPaddleData.y = partnerPaddleData.height + ballData.radius;
       userPaddleData.x = (canvas.width / 2) - (userPaddleData.width / 2);
       partnerPaddleData.x = (canvas.width / 2) - (partnerPaddleData.width / 2);
+
+      io.to(socket.id).emit("setDistance", { distance: DISTANCE });
     });
 
     socket.on("userKeyDown", ({ keyCode, partnerSocketId }) => {
-      const distance = canvas.width / PERCENTAGE;
-
       if (keyCode === LEFT && userPaddleData.x <= 0) {
         userPaddleData.x = 0;
       } else if (keyCode === LEFT) {
-        userPaddleData.x -= distance;
+        userPaddleData.x -= DISTANCE;
       }
 
       if (keyCode === RIGHT && userPaddleData.x + userPaddleData.width >= canvas.width) {
-          userPaddleData.x = canvas.width - userPaddleData.width;
+        userPaddleData.x = canvas.width - userPaddleData.width;
       } else if (keyCode === RIGHT) {
-        userPaddleData.x += distance;
+        userPaddleData.x += DISTANCE;
       }
 
-      io.to(partnerSocketId).emit("userKeyDown", { keyCode, distance });
+      io.to(partnerSocketId).emit("userKeyDown", { userPaddleX: userPaddleData.x });
     });
 
     socket.on("partnerKeyDown", ({ keyCode, partnerSocketId }) => {
-      const distance = canvas.width / PERCENTAGE;
-
       if (keyCode === LEFT && partnerPaddleData.x <= 0) {
         partnerPaddleData.x = 0;
       } else if (keyCode === LEFT) {
-        partnerPaddleData.x -= distance;
+        partnerPaddleData.x -= DISTANCE;
       }
 
       if (keyCode === RIGHT && partnerPaddleData.x + partnerPaddleData.width >= canvas.width) {
-          partnerPaddleData.x = canvas.width - partnerPaddleData.width;
+        partnerPaddleData.x = canvas.width - partnerPaddleData.width;
       } else if (keyCode === RIGHT) {
-        partnerPaddleData.x += distance;
+        partnerPaddleData.x += DISTANCE;
       }
 
-      io.to(partnerSocketId).emit("partnerKeyDown", { keyCode, distance });
+      io.to(partnerSocketId).emit("partnerKeyDown", { partnerPaddleX: partnerPaddleData.x });
     });
 
     socket.on("userKeyUp", ({ partnerSocketId }) => {
