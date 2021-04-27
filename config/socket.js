@@ -1,4 +1,4 @@
-const server = require("../game");
+const calculateBallPosition = require("../game");
 const { ballData, userPaddleData, partnerPaddleData } = require("../game/data");
 
 const totalUserList = {};
@@ -162,11 +162,11 @@ module.exports = (io) => {
       io.to(partnerSocketId).emit("partnerKeyUP");
     });
 
-    socket.on("moveBall", (isModerator) => {
-      const roomKey = totalRoomList[socket.id];
-      const result = server(canvas, isModerator);
+    socket.on("moveBall", ({ partnerSocketId }) => {
+      const result = calculateBallPosition(canvas);
 
-      io.sockets.in(roomKey).emit("moveBall", result);
+      io.to(socket.id).emit("moveBall", result);
+      io.to(partnerSocketId).emit("moveBall", result);
     });
 
     socket.on("startRound", () => {

@@ -26,5 +26,6 @@ module.exports.partnerPaddleCollision = (canvas) => {
     ballData.y - ballData.radius < partnerPaddleData.y + partnerPaddleData.height / 2
     ) {
     ballData.dy *= -1;
+    ballData.y += 7.5;
   }
 };
