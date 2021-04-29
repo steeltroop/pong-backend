@@ -15,6 +15,8 @@ module.exports.userPaddleCollision = () => {
 
     ballData.dx = ballData.speed * Math.sin(angle);
     ballData.dy = ballData.speed * Math.cos(angle) * -1;
+
+    ballData.speed += 0.5;
   }
 };
 
@@ -27,5 +29,11 @@ module.exports.partnerPaddleCollision = (canvas) => {
     ) {
     ballData.dy *= -1;
     ballData.y += 7.5;
+
+    if (ballData.dy > 0) ballData.dy += 0.5;
+    if (ballData.dy < 0) ballData.dy -= 0.5;
+
+    if (ballData.dx > 0) ballData.dx += 0.5;
+    if (ballData.dx < 0) ballData.dx -= 0.5;
   }
 };
