@@ -171,6 +171,12 @@ module.exports = (io) => {
     socket.on("moveBall", ({ partnerSocketId }) => {
       const result = calculateBallPosition(canvas);
 
+      if (result.end) {
+        ballData.dx = 0;
+        ballData.dy = 5;
+        ballData.speed = 10;
+      }
+
       io.to(socket.id).emit("moveBall", result);
       io.to(partnerSocketId).emit("moveBall", result);
     });
