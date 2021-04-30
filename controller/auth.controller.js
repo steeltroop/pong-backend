@@ -9,7 +9,10 @@ module.exports.login = async (req, res, next) => {
     const currentUser = await User.findOne({ email });
     if (!currentUser) await User.create(req.body);
 
-    const token = jwt.sign({ email, name }, process.env.JWT_SECRET);
+    const token = jwt.sign({
+      email,
+      name
+    }, process.env.JWT_SECRET);
 
     res
       .cookie("authToken", token)
@@ -23,3 +26,14 @@ module.exports.login = async (req, res, next) => {
     next(createError(500, "로그인에 실패했습니다."));
   }
 };
+
+module.exports.logout = async (req, res, next) => {
+  try {
+    res
+      .clearCookie("authToken")
+      .status(200)
+      .json({ result: "success" });
+  } catch (err) {
+    next(createError(500, "로그아웃에 실패했습니다."));
+  }
+}

@@ -20,8 +20,8 @@ mongoose.connect(db, {
   .then(() => console.log("Database connection successful 👍🏻"))
   .catch(err => console.log(err));
 
+const authRouter = require("./routes/auth");
 const usersRouter = require("./routes/users");
-const loginRouter = require("./routes/login");
 const battleRouter = require("./routes/battle")
 
 const app = express();
@@ -29,15 +29,15 @@ const app = express();
 app.use(cors({
   origin: true,
   credentials: true,
-  httpOnly: true,
+  httpOnly: false,
 }));
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
+app.use("/auth", authRouter);
 app.use("/users", usersRouter);
-app.use("/auth/login", loginRouter);
 app.use("/battle", battleRouter);
 
 app.use((req, res, next) => {
@@ -49,7 +49,10 @@ app.use((err, req, res, next) => {
   res.locals.error = req.app.get("env") === "development" ? err : {};
 
   res.status(err.status || 500);
-  res.json({ result: false, message: err.message });
+  res.json({
+    result: false,
+    message: err.message
+  });
 });
 
 module.exports = app;
