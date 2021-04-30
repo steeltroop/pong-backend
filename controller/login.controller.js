@@ -14,8 +14,12 @@ module.exports.login = async (req, res, next) => {
     res
       .cookie("authToken", token)
       .status(201)
-      .json({ result: "success", message: "로그인에 성공했습니다." });
+      .json({
+        result: "success",
+        message: "로그인에 성공했습니다.",
+        token,
+      });
   } catch (err) {
-    next(createError(500, "로그인에 실패했습니다"));
+    next(createError(500, "로그인에 실패했습니다."));
   }
 };

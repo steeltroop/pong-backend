@@ -11,14 +11,12 @@ const canvasData = {
     height: 20,
     width: 100,
     x: 250,
-    color: "#ef476f"
   },
   partnerPaddleData: {
     height: 20,
     width: 100,
     x: 250,
-    color: "#118ab2"
-  }
+  },
 };
 
 module.exports = canvasData;

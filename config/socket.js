@@ -33,12 +33,12 @@ module.exports = (io) => {
           isMatched: true,
           partner: {
             socketId: partner.id,
-            name: totalUserList[partner.id]
+            name: totalUserList[partner.id],
           },
           webcam: {
             isCalling: true,
             isCallAccepted: false,
-            callserSignal: null
+            callserSignal: null,
           },
           gameBoard: {
             isModerator: true,
@@ -49,7 +49,7 @@ module.exports = (io) => {
           isMatched: true,
           partner: {
             socketId: socket.id,
-            name: totalUserList[socket.id]
+            name: totalUserList[socket.id],
           }
         });
       } else {
@@ -65,7 +65,10 @@ module.exports = (io) => {
 
     socket.on("sendTextMessage", ({ text, userSocketId }) => {
       const roomKey = totalRoomList[userSocketId];
-      const newChat = { userSocketId, text };
+      const newChat = {
+        userSocketId,
+        text,
+      };
 
       io.sockets.in(roomKey).emit("sendTextMessage", newChat);
     });

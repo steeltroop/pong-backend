@@ -12,7 +12,7 @@ describe("App TEST", function () {
 
   const mockUser = {
     email: "test@test.com",
-    name: "test"
+    name: "test",
   };
   let mockUserId = null;
   let token = null;
@@ -50,6 +50,10 @@ describe("App TEST", function () {
 
         done();
       });
+  });
+
+  afterEach(() => {
+    token = null;
   });
 
   describe("GET `/users`", () => {
@@ -97,12 +101,13 @@ describe("App TEST", function () {
     it("should patch score", (done) => {
       request(app)
         .patch("/battle")
+        .set("cookie", `authToken=${token}`)
         .send({ email: mockUser.email })
         .expect(200)
         .end(async (err, res) => {
           if (err) return done(err);
 
-          expect(res.body.status).to.eql("success");
+          expect(res.body.result).to.eql("success");
 
           const testUser = await User.findOne({ email: mockUser.email });
 

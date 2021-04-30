@@ -15,7 +15,7 @@ const db = process.env.DATABASE.replace(
 mongoose.connect(db, {
   useNewUrlParser: true,
   useCreateIndex: true,
-  useUnifiedTopology: true
+  useUnifiedTopology: true,
 })
   .then(() => console.log("Database connection successful 👍🏻"))
   .catch(err => console.log(err));
@@ -29,7 +29,7 @@ const app = express();
 app.use(cors({
   origin: true,
   credentials: true,
-  httpOnly: true
+  httpOnly: true,
 }));
 app.use(logger("dev"));
 app.use(express.json());
@@ -40,11 +40,11 @@ app.use("/users", usersRouter);
 app.use("/auth/login", loginRouter);
 app.use("/battle", battleRouter);
 
-app.use(function(req, res, next) {
+app.use((req, res, next) => {
   next(createError(404));
 });
 
-app.use(function(err, req, res, next) {
+app.use((err, req, res, next) => {
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};
 
