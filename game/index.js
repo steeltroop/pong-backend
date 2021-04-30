@@ -15,7 +15,11 @@ const calculateBallPosition = (canvas) => {
     ballData.x = canvas.width / 2;
     ballData.y = canvas.height / 2;
 
-    return { ballData, end: true, isBallTop: true };
+    return {
+      ballData,
+      end: true,
+      isBallTop: true,
+    };
   }
 
   if (ballData.y > canvas.height - ballData.radius) {
@@ -24,7 +28,11 @@ const calculateBallPosition = (canvas) => {
     ballData.x = canvas.width / 2;
     ballData.y = canvas.height / 2;
 
-    return { ballData, end: true, isBallTop: false };
+    return {
+      ballData,
+      end: true,
+      isBallTop: false,
+    };
   }
 
   if (

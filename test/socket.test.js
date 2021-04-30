@@ -12,7 +12,6 @@ let client;
 let client2;
 
 describe("Websocket server test", () => {
-
   describe("initialConnection", () => {
     beforeEach((done) => {
       client = io.connect(SERVER_URL, OPTIONS);

@@ -8,7 +8,7 @@ module.exports.getAll = async (req, res, next) => {
     res
       .status(200)
       .json(users);
-  } catch(err) {
+  } catch (err) {
     next(createError(500, err.message));
   }
 };

@@ -13,9 +13,9 @@ module.exports.patch = async (req, res, next) => {
     res
       .status(200)
       .json({
-        status: "success"
+        result: "success",
       });
-  } catch(err) {
+  } catch (err) {
     next(createError(500, err.message));
   }
 };
